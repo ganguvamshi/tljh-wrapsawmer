@@ -28,7 +28,7 @@ def tljh_post_install():
     def tljh_use_wrapspawner():
         
         # create the wrapspawner config file
-        f = open('/opt/tljh/config/jupyterhub_config/wrapspawner_tljh_config.py', 'w')
+        f = open('/opt/tljh/config/jupyterhub_config.d/wrapspawner_tljh_config.py', 'w')
 
         # add the details to configure dockerspaner
         contents= [
