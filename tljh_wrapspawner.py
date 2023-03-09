@@ -58,4 +58,7 @@ def tljh_post_install():
     def restart_tljh():
         subprocess.call("sudo tljh-config reload", shell=True)
     
+    install_dockerspawner()
+    install_wrap_spawner()
+    
 
