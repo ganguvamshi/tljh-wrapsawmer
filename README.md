@@ -10,7 +10,6 @@ include `--plugin thljh-wrapspawner` in yout TLJH install script. For example, h
 #!/bin/bash 
 curl https://raw.githubusercontent.com/jupyterhub/the-littlest-jupyterhub/master/bootstrap/bootstrap.py \
   | sudo python3 - \
-    --admin juser:hellojhub --plugin git+https://github.com/pennchildlanglab/tljh-datascience
+    --admin juser:hellojhub --plugin git+https://github.com/ganguvamshi/tljh-wrapsawner
     
 ```
-
