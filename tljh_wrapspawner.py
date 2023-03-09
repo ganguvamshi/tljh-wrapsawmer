@@ -12,14 +12,7 @@ def tljh_config_post_install(config):
     
     config['user_environment'] = user_environment
 
-@hookimpl
-def tljh_custom_jupyterhub_config(c):
-    c.JupyterHub.spawner_class = 'wrapspawner.ProfilesSpawner'
-    c.ProfilesSpawner.profiles = [ 
-        ('Host process','local','systemdspawner.SystemdSpawner'),
-        ('Docker (singlecell)' ,'singlecell', 'dockerspawner.SystemUserSpawner', dict(image="rnakato/singlecell_jupyter:latest")),
-        ('Docker (Renv)' ,'datascience', 'dockerspawner.SystemUserSpawner', dict(image="jupyter/datascience-notebook:r-4.0.3") )
-    ]
+
 
 
 @hookimpl
@@ -35,30 +28,31 @@ def tljh_post_install():
         subprocess.call("sudo /opt/tljh/hub/bin/python3 -m pip install wrapspawner", shell=True)
         get_docker_image()
         get_docker_singlecell()
-    #     tljh_use_wrapspawner()
+        tljh_use_wrapspawner()
     
-    # def tljh_use_wrapspawner():
+    def tljh_use_wrapspawner():
         
-    #     # create the wrapspawner config file
-    #     f = open('/opt/tljh/config/jupyterhub_config.d/wrapspawner_tljh_config.py', 'w')
+        # create the wrapspawner config file
+        f = open('/opt/tljh/config/jupyterhub_config.d/wrapspawner_tljh_config.py', 'w')
 
-    #     # add the details to configure dockerspaner
-    #     contents= [
-    #         "c.JupyterHub.spawner_class = 'wrapspawner.ProfilesSpawner'",
-    #         "c.Spawner.http_timeout = 120",
-    #         "c.ProfileSpawner.profiles = [('Host process','local','systemdspawner.SystemdSpawner') ," ,
-    #         "\t('Docker (singlecell)' ,'singlecell', 'dockerspawner.SystemUserSpawner', dict(image=\"rnakato/singlecell_jupyter:latest\") ),",
-    #         "\t('Docker (Renv)' ,'datascience', 'dockerspawner.SystemUserSpawner', dict(image=\"jupyter/datascience-notebook:r-4.0.3\") ) ],",
-    #         "c.DockerSpawner.image_whitelist = ['rnakato/singlecell_jupyter:latest','jupyter/datascience-notebook:r-4.0.3']",
-    #         "from jupyter_client.localinterfaces import public_ips",
-    #         "c.DockerSpawner.name_template = '{prefix}-{username}-{servername}'"
-    #     ]
+        # add the details to configure dockerspaner
+        contents= [
+            "c.JupyterHub.spawner_class = 'wrapspawner.ProfilesSpawner'",
+            "c.Spawner.http_timeout = 120",
+            "c.ProfileSpawner.profiles = [('Host process','local','systemdspawner.SystemdSpawner') ," ,
+            "\t('Docker (singlecell)' ,'singlecell', 'dockerspawner.SystemUserSpawner', dict(image=\"rnakato/singlecell_jupyter:latest\") ),",
+            "\t('Docker (Renv)' ,'datascience', 'dockerspawner.SystemUserSpawner', dict(image=\"jupyter/datascience-notebook:r-4.0.3\") ) ],",
+            "c.DockerSpawner.image_whitelist = ['rnakato/singlecell_jupyter:latest','jupyter/datascience-notebook:r-4.0.3']",
+            "from jupyter_client.localinterfaces import public_ips",
+            "c.JupyterHub.hub_ip = public_ips()[0]",
+            "c.DockerSpawner.name_template = '{prefix}-{username}-{servername}'"
+        ]
 
-        # # add to the config file
-        # for line in contents:
-        #     f.write(line)
-        #     f.write("\n")
-        # f.close()
+        # add to the config file
+        for line in contents:
+            f.write(line)
+            f.write("\n")
+        f.close()
 
 
     def get_docker_image():
