@@ -1,4 +1,5 @@
 from tljh.hooks import hookimpl
+from tljh.user import ensure_user_group
 import subprocess
 
 
@@ -39,9 +40,11 @@ def tljh_post_install():
         contents= [
             "c.JupyterHub.spawner_class = 'wrapspawner.ProfilesSpawner'",
             "c.Spawner.http_timeout = 120",
-            "c.ProfileSpawner.profiles = [('Host process','local','systemdspawner.SystemdSpawner') ," ,
-            "\t('Docker (singlecell)' ,'singlecell', 'dockerspawner.SystemUserSpawner', dict(image=\"rnakato/singlecell_jupyter:latest\") ),",
-            "\t('Docker (Renv)' ,'datascience', 'dockerspawner.SystemUserSpawner', dict(image=\"jupyter/datascience-notebook:r-4.0.3\") ) ],",
+            "c.ProfilesSpawner.profiles = [",
+                "\t('Host process','local','systemdspawner.SystemdSpawner' , {'ip':'0.0.0.0'} )," ,
+                "\t('Docker (singlecell)' ,'singlecell', 'dockerspawner.SystemUserSpawner', dict(image=\"rnakato/singlecell_jupyter:latest\") ),",
+                "\t('Docker (Renv)' ,'datascience', 'dockerspawner.SystemUserSpawner', dict(image=\"jupyter/datascience-notebook:r-4.0.3\") )",
+            "]",
             "c.DockerSpawner.image_whitelist = ['rnakato/singlecell_jupyter:latest','jupyter/datascience-notebook:r-4.0.3']",
             "from jupyter_client.localinterfaces import public_ips",
             "c.JupyterHub.hub_ip = public_ips()[0]",
@@ -71,3 +74,6 @@ def tljh_post_install():
     install_wrap_spawner()
     
 
+@hookimpl
+def tljh_new_user_create(username):
+    ensure_user_group(username, 'docker')
