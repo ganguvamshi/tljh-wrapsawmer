@@ -39,7 +39,6 @@ def tljh_post_install():
             "\t('Docker (Renv)' ,'datascience', 'dockerspawner.SystemUserSpawner', dict(image=\"jupyter/datascience-notebook:r-4.0.3\") ) ],",
             "c.DockerSpawner.image_whitelist = ['rnakato/singlecell_jupyter:latest','jupyter/datascience-notebook:r-4.0.3']",
             "from jupyter_client.localinterfaces import public_ips",
-            "c.JupterHub.hub_ip = public_ips()[0]",
             "c.DockerSpawner.name_template = '{prefix}-{username}-{servername}'"
         ]
 
@@ -49,11 +48,16 @@ def tljh_post_install():
             f.write("\n")
         f.close()
         get_docker_image()
+        get_docker_singlecell()
 
     def get_docker_image():
         subprocess.call("sudo docker pull jupyter/datascience-notebook:r-4.0.3", shell=True)
         restart_tljh()
-
+    
+    def get_docker_singlecell():
+        subprocess.call("sudo docker pull rnakato/singlecell_jupyter:latest",  shell=True)
+        restart_tljh()
+    
     # and the restart TLJH and rebuild jupyterlab
     def restart_tljh():
         subprocess.call("sudo tljh-config reload", shell=True)
